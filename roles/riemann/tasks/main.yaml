@@ -1,0 +1,14 @@
+---
+
+- name: Install Riemann
+  yum: name=https://aphyr.com/riemann/riemann-0.2.8-1.noarch.rpm state=present
+
+- name: install confs
+  template: src={{ riemann_config }}
+        dest=/etc/riemann/riemann.config
+        mode=0644
+
+- name: restart riemann
+  service: name=riemann
+           state=reloaded
+           enabled=yes

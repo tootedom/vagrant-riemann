@@ -1,0 +1,39 @@
+---
+- name: install smtp support
+  yum: name={{ item }} state=present
+  with_items:
+    - daemonize
+
+- name: Install Riemann Dash
+  gem:  name=riemann-dash
+        state=latest
+        user_install=no
+        executable=/usr/bin/gem
+
+- name: Setup riemann-dash run dir
+  file: path={{ item }}
+        state=directory
+        mode=0775
+        owner=riemann
+        group=riemann
+  with_items:
+    - "{{ riemann_dash_home }}"
+    - "{{ riemann_dash_config_dir }}"
+
+- name: install riemann-dash confs
+  template: src=config.rb.j2
+            dest={{ riemann_dash_home }}/config.rb
+            owner=riemann
+            group=riemann
+            mode=0664
+
+- name: install sysv init
+  template: src={{ item }}
+        dest=/etc/init.d/riemann-dash
+        mode=0755
+  with_items:
+    - riemann-dash.conf.j2
+
+- name: restart riemann-dash
+  service: name=riemann-dash
+           state=restarted

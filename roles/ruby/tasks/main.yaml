@@ -1,0 +1,51 @@
+---
+
+  #############################
+  # Prepare the workstation
+  #############################
+
+  - name: Install compilers and libraries needed to build ruby
+    yum: name="@Development Tools" state=present
+
+  - name: Remove the default Ruby 1.8.7 packages
+    yum: name={{ item }} state=removed
+    with_items:
+      - ruby
+      - ruby-devel
+      - ruby-irb
+      - ruby-libs
+      - ruby-rdoc
+      - rubygems
+
+  - name: Install zlib
+    yum: name={{ item }} state=present
+    with_items:
+      - zlib-devel
+      - openssl-devel
+
+  ###############################
+  # Install prebuilt 1.9.3
+  ###############################
+
+
+  - name: Install ruby 1.9.3
+    yum: name=/vagrant/ruby-1.9.3p545-1.el6.x86_64.rpm state=present
+
+
+  #################################################
+  # Test install
+  #
+  # ruby -v should show 'ruby-1.9.3-p484' or
+  # the same name you enter for ruby_version above.
+  #
+  # If it doesn't then reboot and it should. I would
+  # add a reboot step here but I don't know how to
+  # do this with Chef.
+  #################################################
+
+  #############################################
+  # Install gem and Chef related packages
+  #############################################
+
+  - name: Update gem system
+    command: /usr/bin/gem update --system

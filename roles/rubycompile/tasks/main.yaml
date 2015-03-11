@@ -1,0 +1,88 @@
+---
+
+  #############################
+  # Prepare the workstation
+  #############################
+
+  - name: Install compilers and libraries needed to build ruby
+    yum: name="@Development Tools" state=present
+
+  - name: Remove the default Ruby 1.8.7 packages
+    yum: name={{ item }} state=removed
+    with_items:
+      - ruby
+      - ruby-devel
+      - ruby-irb
+      - ruby-libs
+      - ruby-rdoc
+      - rubygems
+
+  - name: Install devtools
+    yum: name={{ item }} state=present
+    with_items:
+      - zlib-devel
+      - openssl-devel
+      - rpm-build
+      - rpmdevtools
+      - yum-utils
+      - wget
+      - git
+      - readline-devel
+      - ncurses-devel
+      - gdbm-devel
+      - tcl-devel
+      - openssl-devel
+      - db4-devel
+      - byacc
+      - libyaml-devel
+      - libffi-devel
+      - make
+
+  #############################################
+  # Install libyaml which is needed by gem
+  #############################################
+
+  - name: Setup rpm build dir structure
+    command: rpmdev-setuptree
+
+
+  - name: Download ruby source
+    get_url: url="http://ftp.ruby-lang.org/pub/ruby/1.9/{{ ruby_ver }}-{{ ruby_subver }}.tar.gz"
+             dest="/root/rpmbuild/SOURCES/{{ ruby_ver }}-{{ ruby_subver }}.tar.gz"
+
+  - name: Download ruby spec
+    get_url: url="https://raw.github.com/imeyer/{{ ruby_ver }}-rpm/master/ruby19.spec"
+           dest="/root/rpmbuild/SPECS/ruby19.spec"
+
+
+  - name: Pull down spec file dependencies
+    command: yum-builddep /root/rpmbuild/SPECS/ruby19.spec
+
+  - name: Compile ruby and build rpm
+    command: rpmbuild -v -bb --clean /root/rpmbuild/SPECS/ruby19.spec
+
+
+  #############################################
+  # Install Ruby version 1.9.3
+  #############################################
+
+  - name: install built rpm
+    yum: name=/root/rpmbuild/RPMS/x86_64/ruby-1.9.3p545-1.el6.x86_64.rpm state=present
+
+  #################################################
+  # Test install
+  #
+  # ruby -v should show 'ruby-1.9.3-p484' or
+  # the same name you enter for ruby_version above.
+  #
+  # If it doesn't then reboot and it should. I would
+  # add a reboot step here but I don't know how to
+  # do this with Chef.
+  #################################################
+
+  #############################################
+  # Install gem and Chef related packages
+  #############################################
+
+  - name: Update gem
+    command: /usr/bin/gem update --system

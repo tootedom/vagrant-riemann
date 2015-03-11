@@ -1,0 +1,24 @@
+---
+- name: install smtp support
+  yum: name={{ item }} state=present
+  with_items:
+    - sendmail
+    - daemonize
+
+- name: install gem riemann-tools
+  gem: >
+        name=riemann-tools
+        state=latest
+        user_install=no
+        executable=/usr/bin/gem
+
+- name: install sysv init
+  template: src={{ item }}
+        dest=/etc/init.d/riemann-health
+        mode=0755
+  with_items:
+    - riemann-health.conf.j2
+
+- name: restart riemann-health
+  service: name=riemann-health
+           state=restarted

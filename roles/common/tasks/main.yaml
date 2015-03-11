@@ -1,0 +1,3 @@
+---
+- group: name=riemann gid=497 state=present
+- user: name=riemann comment="Riemann monitoring system" uid=497 group=riemann

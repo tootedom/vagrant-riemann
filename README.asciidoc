@@ -1,0 +1,20 @@
+= vagrant-riemann
+
+:toc:
+:toclevels: 4
+:toc-placement!:
+
+toc::[]
+
+
+= Overview
+
+do a vagrant up, and you get:
+
+- centos 6.6
+- ruby 1.9.3
+- riemann on port 5555 in the guest, 15555 from the host
+- riemann-dash on port 4567 in the guest, 14567 from the host
+- riemann-heath running on the guest
+
+

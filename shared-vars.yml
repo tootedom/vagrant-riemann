@@ -1,0 +1,5 @@
+riemann_host: riemann
+riemann_port: 5555
+riemann_user: riemann
+riemann_group: riemann
+ruby_version: ruby-1.9.3-p484 # Check: https://www.ruby-lang.org/en/downloads/ for the latest version.

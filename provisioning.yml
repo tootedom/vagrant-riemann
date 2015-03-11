@@ -1,0 +1,11 @@
+- hosts: all
+  sudo: yes
+
+  vars_files:
+    - shared-vars.yml
+
+  roles:
+    - role: riemann
+    - role: riemann-tools
+    - role: riemann-dash
+    # - role: rubycompile
